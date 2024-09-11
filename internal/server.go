@@ -113,7 +113,7 @@ func (s *Server) AuthHandler(providerName, rule string) http.HandlerFunc {
 				// The email address isn't valid so display an error and clear the cookie
 				// Clearing the cookie will allow the user to try another email address and avoid being trapped on 'Not authorized'
 				http.SetCookie(w, ClearCookie(r))
-				http.Error(w, "Not authorized (Refresh to try again with a different email address)", 401)
+				http.Error(w, "Not authorized (refresh to try again with a different account)", 401)
 			} else {
 				http.Error(w, "Not authorized", 401)
 			}
