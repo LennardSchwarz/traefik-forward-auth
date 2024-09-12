@@ -4,44 +4,44 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: 'Tag to use for the Docker images'
+        description: "Tag to use for the Docker images"
         required: true
-    
 
 jobs:
-
   build_and_push:
     name: Build and push Docker images
     runs-on: ubuntu-latest
     steps:
-    - name: Check out code into the Go module directory
-      uses: actions/checkout@v2
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v2
 
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
-    - name: Log in to GHCR
-      uses: docker/login-action@v3
-      with:
-        registry: ghcr.io
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
-    - name: Get release tag
-      id: get_tag
-      uses: actions/github-script@v6
-      with:
-        script: |
-          const tag = '${{ github.ref }}'.replace('refs/tags/', '');
-          return tag;
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Get release tag
+        id: get_tag
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const tag = '${{ github.ref }}'.replace('refs/tags/', '');
+            return tag;
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Build and push Docker images for multiple architectures
-      run: |
-        export TAG=$(echo "${{ github.event.inputs.tag }}")
-        echo "Using tag: $TAG"
-  
-        
-        docker buildx build --platform linux/amd64 -t ghcr.io/${{ github.repository }}/traefik-forward-auth:$TAG-amd64 -f Dockerfile --push .
-        docker buildx build --platform linux/arm/v7 -t ghcr.io/${{ github.repository }}/traefik-forward-auth:$TAG-arm -f Dockerfile.arm --push .
-        docker buildx build --platform linux/arm64 -t ghcr.io/${{ github.repository }}/traefik-forward-auth:$TAG-arm64 -f Dockerfile.arm64 --push .
+      - name: Build and push Docker images for multiple architectures
+        run: |
+          echo "REPO=${GITHUB_REPOSITORY@L}"
+          echo "Using tag name: $REPO"
+          export TAG=$(echo "${{ github.event.inputs.tag }}")
+          echo "Using tag: $TAG"
+
+
+          docker buildx build --platform linux/amd64 -t ghcr.io/$REPO:$TAG-amd64 -f Dockerfile --push .
+          docker buildx build --platform linux/arm/v7 -t ghcr.io/$REPO:$TAG-arm -f Dockerfile.arm --push .
+          docker buildx build --platform linux/arm64 -t ghcr.io/$REPO:$TAG-arm64 -f Dockerfile.arm64 --push .
