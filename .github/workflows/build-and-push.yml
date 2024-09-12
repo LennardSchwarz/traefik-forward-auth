@@ -27,9 +27,6 @@ jobs:
 
     - name: Build and push Docker images for multiple architectures
       run: |
-        # DOCKER_CLI_EXPERIMENTAL=enabled docker buildx create --use
-        # DOCKER_CLI_EXPERIMENTAL=enabled docker buildx inspect --bootstrap
-        
-        docker buildx build --platform linux/amd64 -t ghcr.io/${{ github.repository }}/traefik-forward-auth:amd64 -f Dockerfile --push .
-        docker buildx build --platform linux/arm/v7 -t ghcr.io/${{ github.repository }}/traefik-forward-auth:arm -f Dockerfile.arm --push .
-        docker buildx build --platform linux/arm64 -t ghcr.io/${{ github.repository }}/traefik-forward-auth:arm64 -f Dockerfile.arm64 --push .
+        docker buildx build --platform linux/amd64 -t ghcr.io/${{ github.repository }}/traefik-forward-auth:${{ env.TAG }}-amd64 -f Dockerfile --push .
+        docker buildx build --platform linux/arm/v7 -t ghcr.io/${{ github.repository }}/traefik-forward-auth:${{ env.TAG }}-arm -f Dockerfile.arm --push .
+        docker buildx build --platform linux/arm64 -t ghcr.io/${{ github.repository }}/traefik-forward-auth:${{ env.TAG }}-arm64 -f Dockerfile.arm64 --push .
