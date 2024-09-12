@@ -24,9 +24,22 @@ jobs:
         registry: ghcr.io
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
+    - name: Get release tag
+      id: get_tag
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const tag = '${{ github.ref }}'.replace('refs/tags/', '');
+          return tag;
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Build and push Docker images for multiple architectures
       run: |
-        docker buildx build --platform linux/amd64 -t ghcr.io/${{ github.repository }}/traefik-forward-auth:${{ env.TAG }}-amd64 -f Dockerfile --push .
-        docker buildx build --platform linux/arm/v7 -t ghcr.io/${{ github.repository }}/traefik-forward-auth:${{ env.TAG }}-arm -f Dockerfile.arm --push .
-        docker buildx build --platform linux/arm64 -t ghcr.io/${{ github.repository }}/traefik-forward-auth:${{ env.TAG }}-arm64 -f Dockerfile.arm64 --push .
+        export TAG=$(echo "${{ steps.get_tag.outputs.result }}")
+        echo "Using tag: $TAG"
+  
+        
+        docker buildx build --platform linux/amd64 -t ghcr.io/${{ github.repository }}/traefik-forward-auth:$TAG-amd64 -f Dockerfile --push .
+        docker buildx build --platform linux/arm/v7 -t ghcr.io/${{ github.repository }}/traefik-forward-auth:$TAG-arm -f Dockerfile.arm --push .
+        docker buildx build --platform linux/arm64 -t ghcr.io/${{ github.repository }}/traefik-forward-auth:$TAG-arm64 -f Dockerfile.arm64 --push .
