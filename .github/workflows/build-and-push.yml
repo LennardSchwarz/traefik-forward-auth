@@ -1,9 +1,11 @@
 name: Build and Push to ghcr.io
 
 on:
-  release:
-    types: [published]
   workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to use for the Docker images'
+        required: true
     
 
 jobs:
@@ -36,7 +38,7 @@ jobs:
 
     - name: Build and push Docker images for multiple architectures
       run: |
-        export TAG=$(echo "${{ steps.get_tag.outputs.result }}")
+        export TAG=$(echo "${{ github.event.inputs.tag }}")
         echo "Using tag: $TAG"
   
         
