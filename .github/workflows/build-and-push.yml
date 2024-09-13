@@ -33,6 +33,6 @@ jobs:
           echo "Using tag: $TAG"
 
 
-          docker buildx build --platform linux/amd64 -t ghcr.io/$REPO:$TAG-amd64 -f Dockerfile --push .
-          # docker buildx build --platform linux/arm/v7 -t ghcr.io/$REPO:$TAG-arm -f Dockerfile.arm --push .
-          # docker buildx build --platform linux/arm64 -t ghcr.io/$REPO:$TAG-arm64 -f Dockerfile.arm64 --push .
+          docker buildx build --platform linux/amd64 -t ghcr.io/$REPO:$TAG -f Dockerfile --push .
+          docker buildx build --platform linux/arm/v7 -t ghcr.io/$REPO:$TAG-arm -f Dockerfile.arm --push .
+          docker buildx build --platform linux/arm64 -t ghcr.io/$REPO:$TAG-arm64 -f Dockerfile.arm64 --push .
